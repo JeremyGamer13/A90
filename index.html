@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            * {
+                user-select: none;
+                image-rendering: pixelated;
+                font-family: Arial, Helvetica, sans-serif;
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="color: white; position: absolute; left: 25%; top: 25%; width: 50%; height: 50%; background-color: rgba(255, 82, 82, 0.75); border-radius: 16px; text-align: center; display: flex; align-items: center; flex-direction: column; align-content: center; justify-content: center;">
+            <div id="deeznutslmao!">
+                <h1 style="font-weight: bold">A-90 is currently grabbing your windows.</h1>
+                <h1 style="font-weight: bold">Please wait for him to finish.</h1>
+            </div>
+            <br>
+            <h1>Settings</h1>
+            <p>Attempt attack every <input id="AttackInterval" type="number" value="5000">milliseconds</p>
+            <p><input id="AttackChance" type="number" value="40">% chance to attack every attempt</p>
+            <p>Close random window on attack <input id="CloseRandomWindow" type="checkbox" checked="true"></p>
+            <br>
+            <p>Notice: If you enable closing windows, expect a lag spike every 10 seconds as the program needs to refresh the list of closable windows every time.</p>
+            <button id="Begin">Begin A-90</button>
+        </div>
+    </body>
+</html>
