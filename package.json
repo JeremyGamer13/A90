@@ -14,7 +14,8 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
     "find-process": "^1.4.7",
-    "ps-node": "^0.1.6"
+    "ps-node": "^0.1.6",
+    "uiohook-napi": "^1.5.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.5",
