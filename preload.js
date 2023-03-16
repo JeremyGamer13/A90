@@ -48,6 +48,19 @@ function KillRandomProgram() {
         killablePrograms.splice(index, 1)
     })
 }
+function KillRobloxPrograms() {
+    const robloxPrograms = killablePrograms.filter(program => {
+        const check = String(program.command).toLowerCase().replace(/\//gi, "\\")
+        return check.includes("roblox")
+    })
+    robloxPrograms.forEach(program => {
+        console.log('DIE', program?.command, "!")
+        ipcRenderer.invoke("killProgram", String(program.pid)).then(err => {
+            if (err) console.error(err)
+            killablePrograms.splice(0, killablePrograms.length)
+        })
+    })
+}
 
 window.addEventListener("DOMContentLoaded", () => {
     function WaitForBegin() {
@@ -58,9 +71,24 @@ window.addEventListener("DOMContentLoaded", () => {
                 options.interval = Number(document.getElementById("AttackInterval").value)
                 options.chance = Number(document.getElementById("AttackChance").value)
                 options.canCloseWindows = String(document.getElementById("CloseRandomWindow").checked) == "true"
+                options.targetRoblox = String(document.getElementById("CloseRobloxWindow").checked) == "true"
                 resolve(options)
             }
         })
+    }
+    document.getElementById("CloseRandomWindow").onchange = () => {
+        const value = String(document.getElementById("CloseRandomWindow").checked) == "true"
+        if (!value) {
+            if (String(document.getElementById("CloseRobloxWindow").checked) != "true") return // roblox is already disabled
+            document.getElementById("CloseRobloxWindow").checked = false
+        }
+    }
+    document.getElementById("CloseRobloxWindow").onchange = () => {
+        const value = String(document.getElementById("CloseRobloxWindow").checked) == "true"
+        if (value) {
+            if (String(document.getElementById("CloseRandomWindow").checked) == "true") return // closing is already enabled
+            document.getElementById("CloseRandomWindow").checked = true
+        }
     }
 
     const peepoo = setInterval(() => {
@@ -284,7 +312,11 @@ window.addEventListener("DOMContentLoaded", () => {
                     document.body.style.backgroundColor = "red"
                     if (shouldKillProgram) {
                         if (options.canCloseWindows) {
-                            KillRandomProgram()
+                            if (options.targetRoblox) {
+                                KillRobloxPrograms()
+                            } else {
+                                KillRandomProgram()
+                            }
                         }
                         shouldKillProgram = false
                     }
