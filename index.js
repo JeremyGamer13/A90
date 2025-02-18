@@ -1,14 +1,18 @@
+const fs = require('fs');
 const path = require('path');
 const childProcess = require('child_process');
 
 const electron = require('electron');
 const csvParser = require('csv-parse/sync');
 
+// Make our config DB work
+if (!fs.existsSync("./databases")) fs.mkdirSync("./databases");
 const Database = require('./easy-json-database');
 const configuration = new Database("./databases/a90-config.json");
 
 const devMode = !electron.app.isPackaged;
 
+// TODO: Make a system tray icon that can be used to close A-90.
 let globalWindow = null;
 const createWindow = () => {
     const win = new electron.BrowserWindow({

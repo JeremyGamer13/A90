@@ -7,6 +7,7 @@ const { uIOhook } = require('uiohook-napi');
 // TODO: Start delay, sensitivity (one for when a-90 will count you as having moved and another in advanced for how quickly inputs are cleared) and A-90 size
 // TODO: Add a setting to allow non-letter drive programs to be killed (ie, //?/C:/Program......). At the moment this can still happen.
 // TODO: Add settings for shutting down + restarting the PC on attack or even blue screening?
+// TODO: Hotkey for closing A90?
 const appSettings = {
     a90AttackInterval: 5000,
     a90AttackChance: 40,
