@@ -7,8 +7,10 @@ const csvParser = require('csv-parse/sync');
 
 // Make our config DB work
 if (!fs.existsSync("./databases")) fs.mkdirSync("./databases");
-const Database = require('./easy-json-database');
-const configuration = new Database("./databases/a90-config.json");
+const Database = require('sync-json-database');
+const configuration = new Database("./databases/a90-config.json", {
+    indented: true
+});
 
 const devMode = !electron.app.isPackaged;
 
@@ -45,6 +47,9 @@ const createWindow = () => {
     globalWindow = win;
     return win;
 };
+const quitApplication = () => {
+    electron.app.quit();
+};
 const createSystemTray = () => {
     const iconPath = path.join(__dirname, './assets/icon.png');
     const icon = electron.nativeImage.createFromPath(iconPath);
@@ -56,7 +61,7 @@ const createSystemTray = () => {
     const contextMenu = electron.Menu.buildFromTemplate([
         {
             label: 'Close', type: 'normal', click: () => {
-                electron.app.quit();
+                quitApplication();
             }
         },
     ]);
@@ -75,12 +80,12 @@ electron.app.whenReady().then(() => {
 });
 electron.app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
-        electron.app.quit();
+        quitApplication();
     }
 });
 
 electron.ipcMain.handle("quitApp", () => {
-    electron.app.quit();
+    quitApplication();
 });
 
 electron.ipcMain.handle("started", () => {
