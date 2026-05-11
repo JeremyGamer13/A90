@@ -12,7 +12,7 @@ const configuration = new Database("./databases/a90-config.json");
 
 const devMode = !electron.app.isPackaged;
 
-// TODO: Make a system tray icon that can be used to close A-90.
+/** @type {electron.BrowserWindow} */
 let globalWindow = null;
 const createWindow = () => {
     const win = new electron.BrowserWindow({
@@ -20,11 +20,13 @@ const createWindow = () => {
         icon: "assets/icon.png",
         width: 1280,
         height: 720,
+
+        frame: false,
         center: true,
         movable: false,
         resizable: false,
-        frame: false,
         transparent: true,
+        
         webPreferences: {
             devTools: devMode,
             sandbox: false,
@@ -43,23 +45,31 @@ const createWindow = () => {
     globalWindow = win;
     return win;
 };
-const getProcessList = () => {
-    // handle this as defined by https://www.pearsonitcertification.com/articles/article.aspx?p=1700427&seqNum=4
-    const buffer = childProcess.execSync("wmic process get ProcessID,ExecutablePath /format:csv");
-    const formalizedString = buffer.toString().trim().replace(/\r/g, "");
+const createSystemTray = () => {
+    const iconPath = path.join(__dirname, './assets/icon.png');
+    const icon = electron.nativeImage.createFromPath(iconPath);
+    const tray = new electron.Tray(icon);
 
-    const parsed = csvParser.parse(formalizedString, { columns: true });
-    const processList = parsed
-        .filter(program => program.ExecutablePath.trim().length > 0)
-        .map(program => ({
-            path: program.ExecutablePath.trim().replace(/\\/gi, "/"),
-            pid: Number(program.ProcessId)
-        }));
-    return processList;
+    tray.setToolTip('A-90');
+    tray.setTitle('A-90');
+
+    const contextMenu = electron.Menu.buildFromTemplate([
+        {
+            label: 'Close', type: 'normal', click: () => {
+                electron.app.quit();
+            }
+        },
+    ]);
+
+    tray.setContextMenu(contextMenu);
+    electron.app.on('before-quit', () => {
+        tray.destroy();
+    });
 };
 
 electron.app.whenReady().then(() => {
     globalWindow = createWindow();
+    createSystemTray();
     electron.app.setName('A-90');
     electron.app.setAppUserModelId('com.jeremygamer13.A90');
 });
@@ -82,6 +92,20 @@ electron.ipcMain.handle("fullscreen", () => {
 });
 
 // TODO: Allow settings to save, not just excused processes
+const getProcessList = () => {
+    // handle this as defined by https://www.pearsonitcertification.com/articles/article.aspx?p=1700427&seqNum=4
+    const buffer = childProcess.execSync("wmic process get ProcessID,ExecutablePath /format:csv");
+    const formalizedString = buffer.toString().trim().replace(/\r/g, "");
+
+    const parsed = csvParser.parse(formalizedString, { columns: true });
+    const processList = parsed
+        .filter(program => program.ExecutablePath.trim().length > 0)
+        .map(program => ({
+            path: program.ExecutablePath.trim().replace(/\\/gi, "/"),
+            pid: Number(program.ProcessId)
+        }));
+    return processList;
+};
 electron.ipcMain.handle("getActiveProcesses", () => {
     const processes = getProcessList();
     return processes;

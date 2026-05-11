@@ -197,6 +197,7 @@ const rushJumpscare = async () => {
     document.body.style.backgroundColor = "black"
 
     const audio = new Audio("assets/audio/rush_static.mp3");
+    audio.volume = 0.5;
     audio.play();
 
     await waitForAudioEnd(audio);
@@ -232,7 +233,7 @@ const rushJumpscare = async () => {
 
     setInterval(() => {
         size += changeBy;
-        changeBy += 3;
+        changeBy += 0.35;
 
         document.body.style.backgroundColor = `rgb(0, ${(Math.random() * 20) + 30}, ${(Math.random() * 80) + 120})`;
 
@@ -240,7 +241,7 @@ const rushJumpscare = async () => {
         rush.style.top = `calc((50% - ${(size + (size / 1.5)) / 2}%) + ${(Math.random() * 16) - 8}px)`;
         rush.style.width = `${size}%`;
         rush.style.height = `${size + (size / 1.5)}%`;
-    }, 5);
+    }, 1 / 30);
 
     await waitForAudioEnd(audio);
     electron.ipcRenderer.invoke("quitApp");
@@ -249,6 +250,7 @@ const ambushJumpscare = () => {
     electron.ipcRenderer.invoke("fullscreen");
 
     const audio = new Audio("assets/audio/ambush_jumpscare.mp3");
+    audio.volume = 0.5;
     audio.play();
 
     audio.onended = () => {
@@ -299,7 +301,7 @@ const ambushJumpscare = () => {
         }
         ambush.style.width = `${size}%`;
         ambush.style.height = `${size * 2}%`;
-    }, 10);
+    }, 1 / 30);
 };
 
 iconExtractor.emitter.on("icon", (event) => {
