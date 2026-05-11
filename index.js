@@ -98,7 +98,6 @@ electron.ipcMain.handle("fullscreen", () => {
 
 // TODO: Allow settings to save, not just excused processes
 const getProcessList = () => {
-    // handle this as defined by https://www.pearsonitcertification.com/articles/article.aspx?p=1700427&seqNum=4
     const buffer = childProcess.execSync("wmic process get ProcessID,ExecutablePath /format:csv");
     const formalizedString = buffer.toString().trim().replace(/\r/g, "");
 
@@ -106,7 +105,7 @@ const getProcessList = () => {
     const processList = parsed
         .filter(program => program.ExecutablePath.trim().length > 0)
         .map(program => ({
-            path: program.ExecutablePath.trim().replace(/\\/gi, "/"),
+            path: program.ExecutablePath.trim(),
             pid: Number(program.ProcessId)
         }));
     return processList;

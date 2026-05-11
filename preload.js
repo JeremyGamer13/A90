@@ -337,12 +337,12 @@ const createProcessElement = (executablePath) => {
     return [label, checkbox];
 };
 const buildProcessList = (activeProcesses, excusedProcesses) => {
-    const programList = document.getElementById("app-program-list");
+    const programList = document.getElementById("app-program-selection-list");
     if (!programList) return;
     if (!programList.parentElement) return;
 
     // empty the program list
-    for (let i = 0; i < programList.children.length; i++) {
+    for (let i = programList.children.length - 1; i >= 0; i--) {
         const element = programList.children[i];
         if (String(element.dataset.keepreset) === "true") continue;
         if (!programList.parentElement) continue;
@@ -355,9 +355,11 @@ const buildProcessList = (activeProcesses, excusedProcesses) => {
 
     // TODO: These arent being added in the right order after reloading the list even though everything SHOULD be synchronous. Maybe use flex + order in CSS?
     const uniquePaths = [...new Set([].concat(excusedProcesses, activePaths))];
-    for (const executablePath of uniquePaths) {
+    for (let i = 0; i < uniquePaths.length; i++) {
         if (!programList.parentElement) continue;
+        const executablePath = uniquePaths[i];
         const [process, checkbox] = createProcessElement(executablePath);
+        process.style.order = i;
         programList.appendChild(process);
 
         if (excusedProcesses.includes(executablePath)) {
@@ -392,7 +394,7 @@ const handleMainMenu = async () => {
     const appBackground = document.getElementById("app-background");
     const loadingScreen = document.getElementById("app-loading-processes");
 
-    const programListRefresh = document.getElementById("app-program-list-refresh");
+    const programListRefresh = document.getElementById("app-program-selection-list-refresh");
     await refreshProgramList();
     programListRefresh.onclick = () => {
         refreshProgramList();
